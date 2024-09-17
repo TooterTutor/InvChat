@@ -1,0 +1,12 @@
+{
+  "text.autoconfig.InvChat.title": "InvChat Configuration",
+  "text.autoconfig.InvChat.option.enabled": "Enable InvChat",
+  "text.autoconfig.InvChat.option.enabled.@Tooltip": "Toggle InvChat on or off",
+  "text.autoconfig.InvChat.option.anchorBelowInventory": "Anchor Below Inventory",
+  "text.autoconfig.InvChat.option.anchorBelowInventory.@Tooltip": "Position the chat widget below the player's inventory",
+  "text.autoconfig.InvChat.option.xOffset": "X Offset",
+  "text.autoconfig.InvChat.option.xOffset.@Tooltip": "Horizontal offset for the chat widget",
+  "text.autoconfig.InvChat.option.yOffset": "Y Offset",
+  "text.autoconfig.InvChat.option.yOffset.@Tooltip": "Vertical offset for the chat widget",
+  "modmenu.descriptionTranslation.invchat": "Allows chatting while in inventory screens"
+}

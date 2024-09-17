@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "invchat",
+  "version": "${version}",
+
+  "name": "invChat",
+  "description": "Simple mod to allow sending messages in any GUI",
+  "authors": [
+    "TooterTutor"
+  ],
+  "contact": {
+    "repo": "https://github.com/TooterTutor/invChat"
+  },
+  "license": "MIT",
+  "icon": "assets/invchat/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "io.github.tootertutor.invchat.InvChat"
+    ],
+
+    "modmenu": [
+      "io.github.tootertutor.invchat.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "invchat.mixins.json"
+  ],
+
+  "suggests": {
+    "another-mod": "*"
+  },
+
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  },
+
+  "custom": {
+    "modmenu:clientsideOnly": true,
+    "modmenu:api": false
+  }
+}
