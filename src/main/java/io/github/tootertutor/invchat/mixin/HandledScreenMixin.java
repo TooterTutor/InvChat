@@ -5,8 +5,8 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -49,7 +49,7 @@ public abstract class HandledScreenMixin extends Screen {
                 }
 
                 // Special handling for Escape key
-                if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+                if (keyCode == InputUtil.GLFW_KEY_ESCAPE) {
                     this.chatWidget.setFocused(false);
                     cir.setReturnValue(true);
                     return;
@@ -60,7 +60,7 @@ public abstract class HandledScreenMixin extends Screen {
                     cir.setReturnValue(true);
                     return;
                 }
-            } else if (keyCode == GLFW.GLFW_KEY_T) {
+            } else if (keyCode == InputUtil.GLFW_KEY_T) {
                 // Focus the widget when 'T' is pressed and it's not already focused
                 this.chatWidget.setFocused(true);
                 cir.setReturnValue(true);

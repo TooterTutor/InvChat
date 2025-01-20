@@ -9,8 +9,8 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ public class InvChat implements ClientModInitializer {
         TextFieldWidget widget = new TextFieldWidget(textRenderer, x, y, widgetWidth, widgetHeight, Text.of("Chat ...")) {
             @Override
             public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-                if (keyCode == GLFW.GLFW_KEY_ENTER) {
+                if (keyCode == InputUtil.GLFW_KEY_ENTER) {
                     String message = this.getText();
                     if (message.startsWith("/")) {
                         mc.getNetworkHandler().sendChatCommand(message.substring(1));
