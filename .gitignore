@@ -1,3 +1,6 @@
+# Ignore Gitignore file itself
+.gitignore
+
 # Compiled class file
 *.class
 
