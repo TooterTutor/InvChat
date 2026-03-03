@@ -28,5 +28,5 @@ The mod has the following configuration options:
 If you encounter any issues or have suggestions for the mod, please report them on the [InvChat GitHub repository](https://github.com/your-username/InvChat/issues).
 
 ## Credits
-- Developed by [Your Name]
+- Developed by TooterTutor
 - Uses the Fabric API
