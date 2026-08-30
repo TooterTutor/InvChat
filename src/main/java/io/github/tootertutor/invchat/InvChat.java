@@ -5,15 +5,14 @@ import net.fabricmc.api.ClientModInitializer;
 /**
  * InvChat 3.0 client entry point.
  *
- * <p>The foundation commit deliberately keeps Minecraft-facing code out of this class so every
- * Stonecutter target can prove its toolchain, mappings and loader configuration before the GUI
- * compatibility layer is introduced.</p>
+ * <p>Minecraft-facing compatibility code lives in focused mixins and adapters so the entry point
+ * remains stable across the complete Stonecutter version matrix.</p>
  */
 public final class InvChat implements ClientModInitializer {
     public static final String MOD_ID = "invchat";
 
     @Override
     public void onInitializeClient() {
-        // Feature registration is added by the next 3.0 implementation patch.
+        // The container-screen mixin is loaded through fabric.mod.json.
     }
 }
