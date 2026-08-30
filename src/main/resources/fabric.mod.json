@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Chat directly from Minecraft inventory and container screens.",
+  "authors": [
+    "TooterTutor"
+  ],
+  "contact": {
+    "sources": "https://github.com/TooterTutor/InvChat",
+    "issues": "https://github.com/TooterTutor/InvChat/issues"
+  },
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "io.github.tootertutor.invchat.InvChat"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "${minecraft}"
+  }
+}
