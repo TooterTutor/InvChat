@@ -1,6 +1,6 @@
 package io.github.tootertutor.invchat.mixin;
 
-import net.minecraft.client.gui.components.EditBox;
+import io.github.tootertutor.invchat.chat.InventoryChatEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 //? if >=1.21.9 {
@@ -31,7 +31,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
     private static final int INVCHAT_WIDGET_HEIGHT = 20;
 
     @Unique
-    private EditBox invchat$chatBox;
+    private InventoryChatEditBox invchat$chatBox;
 
     protected AbstractContainerScreenMixin(Component title) {
         super(title);
@@ -42,7 +42,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
         int x = (this.width - INVCHAT_WIDGET_WIDTH) / 2;
         int y = this.height - INVCHAT_WIDGET_HEIGHT - 10;
 
-        this.invchat$chatBox = new EditBox(
+        this.invchat$chatBox = new InventoryChatEditBox(
                 this.font,
                 x,
                 y,
@@ -91,6 +91,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
         }
 
         if (keyCode == GLFW.GLFW_KEY_T) {
+            this.invchat$chatBox.focusFromChatKey();
             this.invchat$setChatFocused(true);
             cir.setReturnValue(true);
         }
@@ -120,6 +121,7 @@ public abstract class AbstractContainerScreenMixin extends Screen {
         }
 
         if (keyCode == GLFW.GLFW_KEY_T) {
+            this.invchat$chatBox.focusFromChatKey();
             this.invchat$setChatFocused(true);
             cir.setReturnValue(true);
         }
