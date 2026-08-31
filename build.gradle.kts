@@ -2,8 +2,12 @@ plugins {
     id("dev.kikugie.loom-back-compat")
 }
 
-version = "${property("mod.version")}+${sc.current.version}"
-base.archivesName = property("mod.id") as String
+val modId = project.property("mod.id").toString()
+val modName = project.property("mod.name").toString()
+val modVersion = project.property("mod.version").toString()
+
+version = "$modVersion+${sc.current.version}"
+base.archivesName = modId
 
 val requiredJava: JavaVersion = when {
     sc.current.parsed >= "26.1" -> JavaVersion.VERSION_25
@@ -47,19 +51,28 @@ java {
 tasks {
     withType<JavaCompile>().configureEach {
         options.encoding = "UTF-8"
-        options.release.set(requiredJava.majorVersion.toInt())
+
+        // JDK 8 does not support javac's --release flag. For the 1.16.5
+        // target, sourceCompatibility/targetCompatibility already enforce Java 8.
+        if (requiredJava != JavaVersion.VERSION_1_8) {
+            options.release.set(requiredJava.majorVersion.toInt())
+        }
     }
 
     processResources {
         val props = mapOf(
-            "id" to property("mod.id").toString(),
-            "name" to property("mod.name").toString(),
+            "id" to modId,
+            "name" to modName,
             "version" to project.version.toString(),
             "minecraft" to sc.current.version
         )
 
         props.forEach { (key, value) -> inputs.property(key, value) }
         filesMatching("fabric.mod.json") { expand(props) }
+
+        val mixinJava = "JAVA_${requiredJava.majorVersion}"
+        inputs.property("mixinJava", mixinJava)
+        filesMatching("invchat.mixins.json") { expand("java" to mixinJava) }
     }
 
     register<Copy>("buildAndCollect") {
@@ -67,6 +80,6 @@ tasks {
         description = "Builds this Minecraft target and collects its distributable jars."
         dependsOn(loomx.modJar, loomx.modSourcesJar)
         from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
-        into(rootProject.layout.buildDirectory.dir("libs/${property("mod.version")}"))
+        into(rootProject.layout.buildDirectory.dir("libs/$modVersion"))
     }
 }
