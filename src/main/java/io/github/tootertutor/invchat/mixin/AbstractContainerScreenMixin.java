@@ -1,5 +1,6 @@
 package io.github.tootertutor.invchat.mixin;
 
+import io.github.tootertutor.invchat.chat.ChatHistory;
 import io.github.tootertutor.invchat.chat.ChatSender;
 import io.github.tootertutor.invchat.chat.InventoryChatEditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -152,7 +153,9 @@ public abstract class AbstractContainerScreenMixin extends Screen {
         }
 
         if (ChatSender.send(this.minecraft, input)) {
+            ChatHistory.add(input);
             this.invchat$chatBox.setValue("");
+            this.invchat$chatBox.resetHistoryNavigation();
         }
     }
 
