@@ -1,5 +1,6 @@
 package io.github.tootertutor.invchat.mixin;
 
+import io.github.tootertutor.invchat.chat.ChatSender;
 import io.github.tootertutor.invchat.chat.InventoryChatEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -18,9 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * Adds InvChat's text field to vanilla container screens.
  *
- * <p>This first functional layer intentionally stops at text entry. Chat/command submission is
- * added separately so the signed-chat transition around 1.19.x can be tested independently from
- * GUI and focus compatibility.</p>
+ * <p>Chat submission is delegated to a small version-aware adapter so signed-chat networking
+ * changes remain isolated from the GUI and focus code.</p>
  */
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen {
@@ -85,6 +85,12 @@ public abstract class AbstractContainerScreenMixin extends Screen {
                 return;
             }
 
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                this.invchat$submitChat();
+                cir.setReturnValue(true);
+                return;
+            }
+
             this.invchat$chatBox.keyPressed(event);
             cir.setReturnValue(true);
             return;
@@ -115,6 +121,12 @@ public abstract class AbstractContainerScreenMixin extends Screen {
                 return;
             }
 
+            if (keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_KP_ENTER) {
+                this.invchat$submitChat();
+                cir.setReturnValue(true);
+                return;
+            }
+
             this.invchat$chatBox.keyPressed(keyCode, scanCode, modifiers);
             cir.setReturnValue(true);
             return;
@@ -127,6 +139,22 @@ public abstract class AbstractContainerScreenMixin extends Screen {
         }
     }
     *///?}
+
+    @Unique
+    private void invchat$submitChat() {
+        if (this.invchat$chatBox == null || this.minecraft == null) {
+            return;
+        }
+
+        String input = this.invchat$chatBox.getValue();
+        if (input.trim().isEmpty()) {
+            return;
+        }
+
+        if (ChatSender.send(this.minecraft, input)) {
+            this.invchat$chatBox.setValue("");
+        }
+    }
 
     @Unique
     private boolean invchat$isChatFocused() {
