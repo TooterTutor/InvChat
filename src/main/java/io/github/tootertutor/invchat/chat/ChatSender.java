@@ -48,13 +48,13 @@ public final class ChatSender {
             minecraft.getConnection().sendChat(content);
         }
         return true;
-        //?} else if 1.19.2 {
+        //?} else if >=1.19.1 {
         /*if (minecraft.player == null) {
             return false;
         }
 
         if (command) {
-            // 1.19.2 can send commands without signing only when no signable arguments are present.
+            // 1.19.1-1.19.2 can send commands without signing only when no signable arguments are present.
             // Fall back to the signed overload (with no preview) when the unsigned path rejects it.
             if (!minecraft.player.commandUnsigned(content)) {
                 minecraft.player.commandSigned(content, null);
@@ -63,7 +63,7 @@ public final class ChatSender {
             minecraft.player.chatSigned(content, null);
         }
         return true;
-        *///?} else if >=1.19 {
+        *///?} else if 1.19 {
         /*if (minecraft.player == null) {
             return false;
         }
