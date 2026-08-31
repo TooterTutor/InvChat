@@ -1,5 +1,7 @@
 package io.github.tootertutor.invchat;
 
+import io.github.tootertutor.invchat.config.ConfigManager;
+import io.github.tootertutor.invchat.config.InvChatConfig;
 import net.fabricmc.api.ClientModInitializer;
 
 /**
@@ -11,8 +13,14 @@ import net.fabricmc.api.ClientModInitializer;
 public final class InvChat implements ClientModInitializer {
     public static final String MOD_ID = "invchat";
 
+    private static InvChatConfig config = new InvChatConfig();
+
     @Override
     public void onInitializeClient() {
-        // The container-screen mixin is loaded through fabric.mod.json.
+        config = ConfigManager.load();
+    }
+
+    public static InvChatConfig getConfig() {
+        return config;
     }
 }

@@ -1,5 +1,6 @@
 package io.github.tootertutor.invchat.mixin;
 
+import io.github.tootertutor.invchat.InvChat;
 import io.github.tootertutor.invchat.chat.ChatHistory;
 import io.github.tootertutor.invchat.chat.ChatSender;
 import io.github.tootertutor.invchat.chat.CommandCompleter;
@@ -12,6 +13,7 @@ import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -27,10 +29,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(AbstractContainerScreen.class)
 public abstract class AbstractContainerScreenMixin extends Screen {
     @Unique
-    private static final int INVCHAT_WIDGET_WIDTH = 200;
-
-    @Unique
     private static final int INVCHAT_WIDGET_HEIGHT = 20;
+
+    @Shadow
+    protected int topPos;
+
+    @Shadow
+    protected int imageHeight;
 
     @Unique
     private InventoryChatEditBox invchat$chatBox;
@@ -41,14 +46,26 @@ public abstract class AbstractContainerScreenMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     private void invchat$addChatBox(CallbackInfo ci) {
-        int x = (this.width - INVCHAT_WIDGET_WIDTH) / 2;
-        int y = this.height - INVCHAT_WIDGET_HEIGHT - 10;
+        if (!InvChat.getConfig().enabled) {
+            this.invchat$chatBox = null;
+            return;
+        }
+
+        int widgetWidth = InvChat.getConfig().width;
+        int x = (this.width - widgetWidth) / 2 + InvChat.getConfig().xOffset;
+        int y;
+
+        if (InvChat.getConfig().anchorBelowInventory) {
+            y = this.topPos + this.imageHeight + 25 + InvChat.getConfig().yOffset;
+        } else {
+            y = this.height - INVCHAT_WIDGET_HEIGHT - 10 + InvChat.getConfig().yOffset;
+        }
 
         this.invchat$chatBox = new InventoryChatEditBox(
                 this.font,
                 x,
                 y,
-                INVCHAT_WIDGET_WIDTH,
+                widgetWidth,
                 INVCHAT_WIDGET_HEIGHT,
                 this.title
         );
