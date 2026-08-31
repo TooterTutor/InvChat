@@ -2,6 +2,7 @@ package io.github.tootertutor.invchat.mixin;
 
 import io.github.tootertutor.invchat.chat.ChatHistory;
 import io.github.tootertutor.invchat.chat.ChatSender;
+import io.github.tootertutor.invchat.chat.CommandCompleter;
 import io.github.tootertutor.invchat.chat.InventoryChatEditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -52,6 +53,11 @@ public abstract class AbstractContainerScreenMixin extends Screen {
                 this.title
         );
         this.invchat$chatBox.setMaxLength(256);
+        if (this.minecraft != null) {
+            this.invchat$chatBox.setCommandCompleter(
+                    new CommandCompleter(this.minecraft, this.invchat$chatBox)
+            );
+        }
 
         //? if >=1.17 {
         this.addRenderableWidget(this.invchat$chatBox);

@@ -19,6 +19,7 @@ public final class InventoryChatEditBox extends EditBox {
     private boolean suppressChatOpenCharacter;
     private int historyCursor = ChatHistory.size();
     private String historyDraft = "";
+    private CommandCompleter commandCompleter;
 
     public InventoryChatEditBox(
             Font font,
@@ -37,6 +38,14 @@ public final class InventoryChatEditBox extends EditBox {
     }
 
 
+
+    /** Connects the edit box to InvChat's Brigadier completion helper. */
+    public void setCommandCompleter(CommandCompleter commandCompleter) {
+        this.commandCompleter = commandCompleter;
+        this.setResponder(commandCompleter::onTextChanged);
+        commandCompleter.onTextChanged(this.getValue());
+    }
+
     /** Resets navigation after a line has been successfully submitted and recorded. */
     public void resetHistoryNavigation() {
         this.historyCursor = ChatHistory.size();
@@ -46,6 +55,12 @@ public final class InventoryChatEditBox extends EditBox {
     //? if >=1.21.9 {
     @Override
     public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+        if (event.key() == GLFW.GLFW_KEY_TAB
+                && this.commandCompleter != null
+                && this.commandCompleter.complete()) {
+            return true;
+        }
+
         if (this.handleHistoryKey(event.key())) {
             return true;
         }
@@ -55,6 +70,12 @@ public final class InventoryChatEditBox extends EditBox {
     //?} else {
     /*@Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_TAB
+                && this.commandCompleter != null
+                && this.commandCompleter.complete()) {
+            return true;
+        }
+
         if (this.handleHistoryKey(keyCode)) {
             return true;
         }
