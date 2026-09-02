@@ -1,5 +1,8 @@
+import me.modmuss50.mpp.ReleaseType
+
 plugins {
     id("dev.kikugie.loom-back-compat")
+    id("me.modmuss50.mod-publish-plugin")
 }
 
 val modId = project.property("mod.id").toString()
@@ -81,5 +84,34 @@ tasks {
         dependsOn(loomx.modJar, loomx.modSourcesJar)
         from(loomx.modJar.flatMap { it.archiveFile }, loomx.modSourcesJar.flatMap { it.archiveFile })
         into(rootProject.layout.buildDirectory.dir("libs/$modVersion"))
+    }
+}
+
+publishMods {
+    val modVersion = project.property("mod.version").toString()
+    val minecraftVersion = sc.current.version
+
+    file.set(loomx.modJar.flatMap { it.archiveFile })
+
+    version.set("$modVersion+$minecraftVersion")
+    displayName.set("InvChat $modVersion for Minecraft $minecraftVersion")
+
+    changelog.set(
+        providers.environmentVariable("RELEASE_CHANGELOG")
+            .orElse("InvChat $modVersion")
+    )
+
+    type.set(ReleaseType.STABLE)
+
+    modLoaders.add("fabric")
+
+    modrinth {
+        accessToken.set(
+            providers.environmentVariable("MODRINTH_TOKEN")
+        )
+
+        projectId.set("6wyX37re")
+
+        minecraftVersions.add(minecraftVersion)
     }
 }
