@@ -6,9 +6,13 @@ import java.util.List;
 /**
  * Small session-local history for messages submitted through InvChat.
  *
- * <p>This intentionally does not depend on Minecraft's internal chat history classes. Those classes
- * have moved and changed shape several times across InvChat's supported versions, while this class
- * can remain identical from 1.16.5 through current releases.</p>
+ * <p>
+ * This intentionally does not depend on Minecraft's internal chat history
+ * classes. Those classes
+ * have moved and changed shape several times across InvChat's supported
+ * versions, while this class
+ * can remain identical from 1.16.5 through current releases.
+ * </p>
  */
 public final class ChatHistory {
     private static final int MAX_ENTRIES = 100;

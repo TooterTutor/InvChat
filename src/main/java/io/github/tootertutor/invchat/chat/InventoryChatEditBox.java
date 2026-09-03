@@ -4,22 +4,16 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.EditBox;
 //? if >=1.21.9 {
 import net.minecraft.client.input.CharacterEvent;
+import net.minecraft.client.input.KeyEvent;
 //?}
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
-/**
- * InvChat's text field with one small piece of input-state handling.
- *
- * <p>GLFW delivers a character event after the T key event that opens/focuses the chat box. Since
- * the box becomes focused during the key event, vanilla would otherwise insert that same T as the
- * first character. This widget consumes only that matching first character event.</p>
- */
+/** InvChat's input widget, history navigation, and T-key character suppression. */
 public final class InventoryChatEditBox extends EditBox {
     private boolean suppressChatOpenCharacter;
     private int historyCursor = ChatHistory.size();
     private String historyDraft = "";
-    private CommandCompleter commandCompleter;
 
     public InventoryChatEditBox(
             Font font,
@@ -32,16 +26,20 @@ public final class InventoryChatEditBox extends EditBox {
         super(font, x, y, width, height, message);
     }
 
-    /** Marks the next matching T/t character event as the event that opened the field. */
+    /** Marks T/t character events from the physical key press that opened the field. */
     public void focusFromChatKey() {
         this.suppressChatOpenCharacter = true;
     }
 
+    /** Clears opening-key suppression once the physical T key has actually been released. */
+    public void updateChatOpenKeyState(boolean chatKeyDown) {
+        if (!chatKeyDown) {
+            this.suppressChatOpenCharacter = false;
+        }
+    }
 
-
-    /** Connects the edit box to InvChat's Brigadier completion helper. */
+    /** Connects text changes to the independent Brigadier completion controller. */
     public void setCommandCompleter(CommandCompleter commandCompleter) {
-        this.commandCompleter = commandCompleter;
         this.setResponder(commandCompleter::onTextChanged);
         commandCompleter.onTextChanged(this.getValue());
     }
@@ -54,28 +52,18 @@ public final class InventoryChatEditBox extends EditBox {
 
     //? if >=1.21.9 {
     @Override
-    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
-        if (event.key() == GLFW.GLFW_KEY_TAB
-                && this.commandCompleter != null
-                && this.commandCompleter.complete()) {
-            return true;
-        }
-
+    public boolean keyPressed(KeyEvent event) {
         if (this.handleHistoryKey(event.key())) {
             return true;
         }
 
         return super.keyPressed(event);
     }
-    //?} else {
+    //?}
+
+    //? if <1.21.9 {
     /*@Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_TAB
-                && this.commandCompleter != null
-                && this.commandCompleter.complete()) {
-            return true;
-        }
-
         if (this.handleHistoryKey(keyCode)) {
             return true;
         }
@@ -104,8 +92,6 @@ public final class InventoryChatEditBox extends EditBox {
             return;
         }
 
-        // A new widget starts at the end of whatever history already exists. Clamp defensively in
-        // case the bounded history discarded an old entry while this widget was alive.
         if (this.historyCursor > historySize) {
             this.historyCursor = historySize;
         }
@@ -140,7 +126,9 @@ public final class InventoryChatEditBox extends EditBox {
 
         return super.charTyped(event);
     }
-    //?} else {
+    //?}
+
+    //? if <1.21.9 {
     /*@Override
     public boolean charTyped(char character, int modifiers) {
         if (this.consumeChatOpenCharacter(character)) {
@@ -156,9 +144,16 @@ public final class InventoryChatEditBox extends EditBox {
             return false;
         }
 
-        // Clear this on the very next character event even if it is not T. That prevents the flag
-        // from becoming stale when a platform/mod suppresses the character event for the opening key.
+        if (codePoint == 't' || codePoint == 'T') {
+            // Keep suppressing while the same physical T press is held. Some platforms can emit
+            // more than one character event before key release. The screen tick clears this flag
+            // as soon as GLFW reports that T has been released.
+            return true;
+        }
+
+        // A different character means the opening-key event sequence has ended. Do not eat the
+        // player's first real character even if key-release polling has not run yet.
         this.suppressChatOpenCharacter = false;
-        return codePoint == 't' || codePoint == 'T';
+        return false;
     }
 }

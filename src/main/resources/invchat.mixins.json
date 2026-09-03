@@ -3,7 +3,8 @@
   "package": "io.github.tootertutor.invchat.mixin",
   "compatibilityLevel": "${java}",
   "client": [
-    "AbstractContainerScreenMixin"
+    "AbstractContainerScreenMixin",
+    "AbstractRecipeBookScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

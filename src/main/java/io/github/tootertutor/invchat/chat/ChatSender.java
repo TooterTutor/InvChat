@@ -3,10 +3,14 @@ package io.github.tootertutor.invchat.chat;
 import net.minecraft.client.Minecraft;
 
 /**
- * Sends chat and commands through the vanilla client path appropriate for each Minecraft era.
+ * Sends chat and commands through the vanilla client path appropriate for each
+ * Minecraft era.
  *
- * <p>Keeping this logic out of the screen mixin prevents signed-chat compatibility details from
- * leaking into the GUI/input layer.</p>
+ * <p>
+ * Keeping this logic out of the screen mixin prevents signed-chat compatibility
+ * details from
+ * leaking into the GUI/input layer.
+ * </p>
  */
 public final class ChatSender {
     private ChatSender() {
@@ -15,8 +19,10 @@ public final class ChatSender {
     /**
      * Sends {@code input} as either chat or a command.
      *
-     * @return {@code true} when a connected player/network handler was available and submission was
-     * attempted; {@code false} when the client is not currently connected to a world/server.
+     * @return {@code true} when a connected player/network handler was available
+     *         and submission was
+     *         attempted; {@code false} when the client is not currently connected
+     *         to a world/server.
      */
     public static boolean send(Minecraft minecraft, String input) {
         if (input == null) {
@@ -35,8 +41,10 @@ public final class ChatSender {
             return false;
         }
 
-        // 1.19.3 moved chat/command submission onto ClientPacketListener. This remains the vanilla
-        // route through current releases and correctly handles message signing/acknowledgements.
+        // 1.19.3 moved chat/command submission onto ClientPacketListener. This remains
+        // the vanilla
+        // route through current releases and correctly handles message
+        // signing/acknowledgements.
         //? if >=1.19.3 {
         if (minecraft.getConnection() == null) {
             return false;

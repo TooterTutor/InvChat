@@ -1,16 +1,17 @@
 package io.github.tootertutor.invchat.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+
+import net.fabricmc.loader.api.FabricLoader;
 
 /** Loads and persists {@code config/invchat.json}. */
 public final class ConfigManager {
@@ -36,6 +37,8 @@ public final class ConfigManager {
             }
 
             config.sanitize();
+            // Persist sanitized/defaulted fields so newly added config options appear in existing files.
+            save(config);
             return config;
         } catch (IOException | JsonParseException exception) {
             System.err.println("[InvChat] Could not read " + CONFIG_PATH + ": " + exception.getMessage());
