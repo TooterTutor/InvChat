@@ -261,6 +261,13 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Inv
     }
     *///?}
 
+    @Override
+    public boolean invchat$scrollSuggestionSelection(double amount) {
+        return this.invchat$isChatFocused()
+                && this.invchat$commandCompleter != null
+                && this.invchat$commandCompleter.mouseScrolled(amount);
+    }
+
     //? if >=26.1 {
     @Inject(method = "extractRenderState", at = @At("TAIL"))
     private void invchat$extractCommandSuggestions(

@@ -15,6 +15,9 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
  * same InvChat instance to draw its suggestion overlay.
  */
 public interface InvChatContainerRenderBridge {
+    /** Lets the global mouse handler offer wheel input to InvChat before the container consumes it. */
+    boolean invchat$scrollSuggestionSelection(double amount);
+
     //? if >=26.1 {
     void invchat$extractSuggestionOverlay(GuiGraphicsExtractor graphics, int mouseX, int mouseY);
     //?}

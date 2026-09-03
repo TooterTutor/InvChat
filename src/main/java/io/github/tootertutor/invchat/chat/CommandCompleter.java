@@ -63,6 +63,7 @@ public final class CommandCompleter {
     private List<Suggestion> suggestions = Collections.emptyList();
     private int selectedIndex;
     private int scrollOffset;
+    private double wheelAccumulator;
     private boolean visible;
     private boolean applyingSuggestion;
     private int lastMouseX = Integer.MIN_VALUE;
@@ -110,6 +111,7 @@ public final class CommandCompleter {
     /** Hides the window without altering the command text. */
     public void hide() {
         this.visible = false;
+        this.wheelAccumulator = 0.0D;
         this.input.setSuggestion(null);
     }
 
@@ -167,6 +169,37 @@ public final class CommandCompleter {
         return true;
     }
 
+    /**
+     * Cycles the highlighted suggestion using the mouse wheel. Positive vertical scroll moves up
+     * the list; negative vertical scroll moves down, matching the vanilla chat suggestion window.
+     */
+    public boolean mouseScrolled(double amount) {
+        String value = this.input.getValue();
+        if (amount == 0.0D
+                || !this.visible
+                || this.suggestions.isEmpty()
+                || !this.isCommandInput(value)) {
+            return false;
+        }
+
+        this.refresh();
+        if (!this.visible || this.suggestions.isEmpty()) {
+            return false;
+        }
+
+        // GLFW may report fractional wheel deltas on high-resolution mice/touchpads. Accumulate
+        // those deltas so one logical notch still advances one suggestion, while consuming the
+        // whole gesture so the underlying inventory does not scroll at the same time.
+        this.wheelAccumulator += amount;
+        int steps = (int) this.wheelAccumulator;
+        if (steps != 0) {
+            this.wheelAccumulator -= steps;
+            this.moveSelection(-steps);
+        }
+
+        return true;
+    }
+
     /** Accepts a suggestion when the user clicks one of the visible rows. */
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button != GLFW.GLFW_MOUSE_BUTTON_LEFT || !this.visible || this.suggestions.isEmpty()) {
@@ -199,6 +232,7 @@ public final class CommandCompleter {
         this.suggestions = Collections.emptyList();
         this.selectedIndex = 0;
         this.scrollOffset = 0;
+        this.wheelAccumulator = 0.0D;
         this.visible = false;
         this.input.setSuggestion(null);
 
@@ -263,6 +297,7 @@ public final class CommandCompleter {
         this.suggestions = resultList;
         this.selectedIndex = 0;
         this.scrollOffset = 0;
+        this.wheelAccumulator = 0.0D;
         this.visible = true;
         this.updateInlineSuggestion();
     }

@@ -5,7 +5,8 @@
   "client": [
     "AbstractContainerScreenMixin",
     "AbstractRecipeBookScreenMixin",
-    "KeyboardHandlerMixin"
+    "KeyboardHandlerMixin",
+    "MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
