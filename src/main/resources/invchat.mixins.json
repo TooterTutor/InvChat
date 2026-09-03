@@ -4,7 +4,8 @@
   "compatibilityLevel": "${java}",
   "client": [
     "AbstractContainerScreenMixin",
-    "AbstractRecipeBookScreenMixin"
+    "AbstractRecipeBookScreenMixin",
+    "KeyboardHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
