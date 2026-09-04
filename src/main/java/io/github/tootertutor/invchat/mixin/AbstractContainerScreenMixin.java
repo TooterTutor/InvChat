@@ -8,6 +8,7 @@ import io.github.tootertutor.invchat.chat.ChatHistory;
 import io.github.tootertutor.invchat.chat.ChatSender;
 import io.github.tootertutor.invchat.chat.CommandCompleter;
 import io.github.tootertutor.invchat.chat.InventoryChatEditBox;
+import io.github.tootertutor.invchat.gui.InvChatConfigScreen;
 import io.github.tootertutor.invchat.render.InvChatContainerRenderBridge;
 import io.github.tootertutor.invchat.render.InvChatRecipeBookScreenMarker;
 //? if >=1.20 && <26.1 {
@@ -38,6 +39,9 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Inv
     @Unique
     private static final int INVCHAT_WIDGET_HEIGHT = 20;
 
+    @Unique
+    private static final int INVCHAT_CONFIG_BUTTON_GAP = 4;
+
     @Shadow
     protected int topPos;
 
@@ -57,6 +61,9 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Inv
     @Inject(method = "init", at = @At("TAIL"))
     private void invchat$addChatBox(CallbackInfo ci) {
         if (!InvChat.getConfig().enabled) {
+            // Keep configuration reachable even when the embedded chat field is disabled.
+            this.invchat$addConfigButton(this.width - 26, 6);
+
             this.invchat$chatBox = null;
             this.invchat$commandCompleter = null;
             return;
@@ -71,6 +78,15 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Inv
         } else {
             y = this.height - INVCHAT_WIDGET_HEIGHT - 10 + InvChat.getConfig().yOffset;
         }
+
+        int configButtonX = x + widgetWidth + INVCHAT_CONFIG_BUTTON_GAP;
+        //? if <1.20.2 {
+        /*int configButtonY = y + 2;
+        *///?}
+        //? if >=1.20.2 {
+        int configButtonY = y;
+        //?}
+        this.invchat$addConfigButton(configButtonX, configButtonY);
 
         this.invchat$chatBox = new InventoryChatEditBox(
                 this.font,
@@ -102,6 +118,16 @@ public abstract class AbstractContainerScreenMixin extends Screen implements Inv
         //?}
         //? if <1.17 {
         /*this.addButton(this.invchat$chatBox);
+        *///?}
+    }
+
+    @Unique
+    private void invchat$addConfigButton(int x, int y) {
+        //? if >=1.17 {
+        this.addRenderableWidget(InvChatConfigScreen.createButton(this, x, y));
+        //?}
+        //? if <1.17 {
+        /*this.addButton(InvChatConfigScreen.createButton(this, x, y));
         *///?}
     }
 

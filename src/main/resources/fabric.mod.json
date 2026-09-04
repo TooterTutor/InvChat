@@ -23,6 +23,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.19.3",
-    "minecraft": "${minecraft}"
+    "minecraft": "${minecraft}",
+    "${cloth_config_id}": "*"
   }
 }

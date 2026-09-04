@@ -20,6 +20,43 @@ val requiredJava: JavaVersion = when {
     else -> JavaVersion.VERSION_1_8
 }
 
+val clothConfigVersion = when {
+    sc.current.parsed >= "26.2" -> "26.2.155"
+    sc.current.parsed >= "26.1" -> "26.1.154"
+    sc.current.parsed >= "1.21.11" -> "21.11.153"
+    sc.current.parsed >= "1.21.9" -> "20.0.149"
+    sc.current.parsed >= "1.21.6" -> "19.0.147"
+    sc.current.parsed >= "1.21.5" -> "18.0.145"
+    sc.current.parsed >= "1.21.4" -> "17.0.144"
+    sc.current.parsed >= "1.21.2" -> "16.0.141"
+    sc.current.parsed >= "1.21" -> "15.0.140"
+    sc.current.parsed >= "1.20.5" -> "14.0.139"
+    sc.current.parsed >= "1.20.3" -> "13.0.138"
+    sc.current.parsed >= "1.20.2" -> "12.0.137"
+    sc.current.parsed >= "1.20" -> "11.1.136"
+    sc.current.parsed >= "1.19.4" -> "10.1.135"
+    sc.current.parsed >= "1.19.3" -> "9.0.94"
+    sc.current.parsed >= "1.19" -> "8.3.103"
+    sc.current.parsed >= "1.18" -> "6.5.102"
+    sc.current.parsed >= "1.17" -> "5.3.63"
+    else -> "4.17.101"
+}
+
+val fabricApiVersion = when (sc.current.version) {
+    "1.17" -> "0.35.2+1.17"
+    "1.18" -> "0.44.0+1.18"
+    "1.18.2" -> "0.47.10+1.18.2"
+    "1.19" -> "0.56.3+1.19"
+    "1.20.1" -> "0.92.2+1.20.1"
+    else -> null
+}
+
+val clothConfigModId = if (sc.current.parsed < "1.18") "cloth-config2" else "cloth-config"
+
+repositories {
+    maven("https://maven.shedaniel.me/")
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
 
@@ -30,6 +67,22 @@ dependencies {
     // InvChat intentionally does not depend on Fabric API at the foundation layer.
     // Fabric Loader itself is version-agnostic and exposes ClientModInitializer.
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    
+    modApi("me.shedaniel.cloth:cloth-config-fabric:$clothConfigVersion") {
+    exclude(group = "net.fabricmc", module = "fabric-loader")
+
+    // Some Cloth Config releases depend on a Fabric API build for a
+    // neighboring Minecraft patch version.
+    if (fabricApiVersion != null) {
+            exclude(group = "net.fabricmc.fabric-api")
+        }
+    }
+
+    if (fabricApiVersion != null) {
+        modImplementation(
+            "net.fabricmc.fabric-api:fabric-api:$fabricApiVersion"
+        )
+    }
 }
 
 loom {
@@ -67,7 +120,8 @@ tasks {
             "id" to modId,
             "name" to modName,
             "version" to project.version.toString(),
-            "minecraft" to sc.current.version
+            "minecraft" to sc.current.version,
+            "cloth_config_id" to clothConfigModId
         )
 
         props.forEach { (key, value) -> inputs.property(key, value) }
